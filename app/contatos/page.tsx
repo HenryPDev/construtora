@@ -13,7 +13,7 @@ const team = [
     name: "Antonio Zeferino",
     title: "Diretor Executivo",
     description: "Com mais de 25 anos de experiência em grandes projetos residenciais.",
-    phone: "(47) 99999-1111",
+    phone: "(67) 98126-9304",
     email: "@.com.br",
   },
   {
@@ -31,7 +31,7 @@ const office = {
   name: "Escritório Principal",
   address: "Rua Exemplo, 1000 - Centro",
   city: "Dourados, MS 79804-000",
-  phone: "(47) 99999-0000",
+  phone: "(67) 98126-9304",
   email: "contato@zeferinocorrea.com.br",
 };
 
@@ -168,7 +168,7 @@ export default function Contatos() {
                 Abrir no Maps
               </button>
               <Link
-                href="https://wa.me/5547999990000?text=Olá%2C%20gostaria%20de%20mais%20informações%20sobre%20os%20serviços%20da%20Zeferino%20%26%20Correa."
+                href="https://wa.me/5567981269304?text=Olá%2C%20gostaria%20de%20mais%20informações%20sobre%20os%20serviços%20da%20Zeferino%20%26%20Correa."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-fit font-oswald font-[300] text-[0.6rem] tracking-[0.35em] uppercase text-[rgba(34,197,94,0.9)] border border-[rgba(34,197,94,0.4)] px-8 py-3 no-underline transition-all duration-[250ms] hover:bg-[rgba(34,197,94,0.1)] hover:border-[rgba(34,197,94,0.8)] hover:text-[rgba(34,197,94,1)]"

@@ -7,7 +7,6 @@ interface HouseProps {
   image: string;
   title: string;
   description: string;
-  price?: string;
   location?: string;
   area?: number;
   bedrooms?: number;
@@ -22,7 +21,6 @@ export default function House({
   image,
   title,
   description,
-  price,
   location,
   area,
   bedrooms,
@@ -108,10 +106,7 @@ export default function House({
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          {price && (
-            <div className="font-cormorant font-[300] text-[2rem] text-[rgba(196,160,80,0.9)] tracking-[0.05em]">{price}</div>
-          )}
+        <div className="flex items-center">
           <Link
             href={`/catalogo/${slug}`}
             className="font-oswald font-[300] text-[0.6rem] tracking-[0.35em] uppercase text-[rgba(196,160,80,0.8)] border border-[rgba(196,160,80,0.3)] px-[1.4rem] py-[0.6rem] transition-all duration-[250ms] hover:bg-[rgba(196,160,80,0.08)] hover:border-[rgba(196,160,80,0.7)] hover:text-[rgba(196,160,80,1)] no-underline"

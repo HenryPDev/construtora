@@ -51,8 +51,7 @@ export default function Home() {
           {panels.map((panel, i) => (
             <div
               key={i}
-              className="flex-1 overflow-hidden relative [transform:skewX(-7deg)] -mx-px max-md:-mx-0 max-md:min-w-[200px] md:hover:[flex:2.8] transition-[flex] duration-[650ms] [transition-timing-function:cubic-bezier(0.77,0,0.175,1)] md:cursor-pointer animate-panel-reveal group/panel"
-              style={{ animationDelay: `${i * 0.1}s` }}
+              className={`flex-1 overflow-hidden relative [transform:skewX(-7deg)] -mx-px max-md:-mx-0 max-md:min-w-[200px] md:hover:[flex:2.8] transition-[flex] duration-[650ms] [transition-timing-function:cubic-bezier(0.77,0,0.175,1)] md:cursor-pointer animate-panel-reveal group/panel animate-delay-${i}`}
             >
               <div className="absolute inset-0 overflow-hidden">
                 <img
@@ -80,21 +79,22 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-[90px] bg-[linear-gradient(to_top,rgba(7,7,7,1)_0%,transparent_100%)] z-[16] pointer-events-none" />
 
         {/* Center brand */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-20 pointer-events-none animate-fade-up">
-          <p className="font-oswald font-[200] text-[clamp(0.5rem,0.9vw,0.68rem)] tracking-[0.7em] text-[rgba(196,160,80,1)] uppercase mb-8">
-            Desde 2020
-          </p>
-          <h1 className="font-cormorant font-[300] italic text-[clamp(4rem,9vw,9.5rem)] text-white tracking-[0.08em] leading-[0.9] [text-shadow:0_4px_60px_rgba(0,0,0,0.95),0_0_120px_rgba(0,0,0,0.7)] mb-6">
-            Zeferino<br /><span className="font-[200] not-italic">&amp;</span><br />Correa
-          </h1>
-          <div className="flex items-center gap-[1.2rem] justify-center my-8">
-            <div className="h-px w-[60px] bg-[linear-gradient(90deg,transparent,rgba(196,160,80,0.6))]" />
-            <div className="w-[5px] h-[5px] bg-[rgba(196,160,80,0.75)] [transform:rotate(45deg)]" />
-            <div className="h-px w-[60px] bg-[linear-gradient(90deg,rgba(196,160,80,0.6),transparent)]" />
-          </div>
-          <p className="font-oswald font-[200] text-[clamp(0.5rem,0.85vw,0.7rem)] tracking-[0.55em] text-[rgba(255,255,255,0.75)] uppercase">
-            Construindo o futuro com excelência
-          </p>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-20 pointer-events-none px-10">
+            <p className="font-oswald font-[200] text-[clamp(0.5rem,0.9vw,0.68rem)] tracking-[0.7em] text-[#ffae00] uppercase mb-8 text-center">
+              Desde 2020
+            </p>
+            <h1 className="font-cormorant font-[300] italic text-[clamp(4rem,9vw,9.5rem)] text-white tracking-[0.08em] leading-[0.9] [text-shadow:0_4px_60px_rgba(0,0,0,0.95),0_0_120px_rgba(0,0,0,0.7)] mb-6 text-center">
+              Zeferino<br /><span className="font-[200] not-italic">&amp;</span><br />Correa
+            </h1>
+            <div className="flex items-center gap-[1.2rem] justify-center my-8">
+              <div className="h-px w-[60px] bg-[linear-gradient(90deg,transparent,rgba(196,160,80,0.6))]" />
+              <div className="w-[5px] h-[5px] bg-[rgba(196,160,80,0.75)] [transform:rotate(45deg)]" />
+              <div className="h-px w-[60px] bg-[linear-gradient(90deg,rgba(196,160,80,0.6),transparent)]" />
+            </div>
+            <p className="font-oswald font-[200] text-[clamp(0.5rem,0.85vw,0.7rem)] tracking-[0.55em] text-[rgba(255,255,255,0.75)] uppercase text-center">
+              Construindo o futuro com excelência
+            </p>
+        
         </div>
 
         {/* Scroll hint */}
