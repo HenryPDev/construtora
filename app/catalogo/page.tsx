@@ -1,65 +1,37 @@
 import House from "@/components/house";
 import Filters from "@/components/filters";
-
+import { houses } from "@/lib/houses";
 
 export const metadata = {
-  title: "Catálogo – Minha Construtora",
-  description: "Veja os projetos e obras da nossa construtora.",
+  title: "Catálogo – Zeferino & Correa",
+  description: "Explore nosso portfólio de projetos residenciais de alto padrão.",
 };
 
-const houses = [
-  {
-    image: "https://via.placeholder.com/400x300?text=Casa+1",
-    title: "Casa Moderna 1",
-    description: "Uma casa moderna com 3 quartos e 2 banheiros, ideal para famílias.",
-    price: "R$ 500.000",
-    location: "São Paulo, SP"
-  },
-  {
-    image: "https://via.placeholder.com/400x300?text=Casa+2",
-    title: "Casa Clássica 2",
-    description: "Casa clássica com jardim amplo e garagem para 2 carros.",
-    price: "R$ 450.000",
-    location: "Rio de Janeiro, RJ"
-  },
-  {
-    image: "https://via.placeholder.com/400x300?text=Casa+3",
-    title: "Apartamento Luxo 3",
-    description: "Apartamento de luxo com vista para o mar e piscina privativa.",
-    price: "R$ 800.000",
-    location: "Florianópolis, SC"
-  },
-  {
-    image: "https://via.placeholder.com/400x300?text=Casa+4",
-    title: "Casa Pequena 4",
-    description: "Casa compacta perfeita para casais jovens, com 2 quartos.",
-    price: "R$ 300.000",
-    location: "Belo Horizonte, MG"
-  },
-  {
-    image: "https://via.placeholder.com/400x300?text=Casa+5",
-    title: "Casa Familiar 5",
-    description: "Espaçosa casa familiar com 4 quartos e área de lazer.",
-    price: "R$ 600.000",
-    location: "Porto Alegre, RS"
-  }
-];
+export default function Catalogo() {
+  return (
+    <div className="bg-[#000000] min-h-screen">
+      <div className="max-w-[1200px] mx-auto px-10 pt-[10rem] pb-20 border-b border-b-[rgba(196,160,80,0.12)]">
+        <p className="font-oswald font-[200] text-[0.6rem] tracking-[0.55em] text-[rgba(196,160,80,0.8)] uppercase mb-4">
+          Portfólio
+        </p>
+        <h1 className="font-cormorant font-[300] text-[clamp(2.5rem,5vw,4.5rem)] text-white tracking-[0.06em] leading-none">
+          Catálogo de<br /><em className="italic text-[rgba(255,255,255,0.65)]">Casas</em>
+        </h1>
+        <p className="font-oswald font-[200] text-[0.72rem] tracking-[0.15em] text-[rgba(255,255,255,0.4)] mt-6 max-w-[500px]">
+          Explore nossas obras residenciais de alto padrão — cada projeto, uma história.
+        </p>
+      </div>
 
-//Filtros: preço mínimo, preço máximo, localização, tipo (casa/apartamento)
-export default function Catalogo(){
-    return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl poppins-semibold mb-4">Catálogo de Casas</h1>
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="max-w-[1200px] mx-auto px-10 py-12 pb-24 grid grid-cols-1 min-[900px]:grid-cols-[280px_1fr] gap-12 items-start">
         <Filters />
-        <main className="lg:w-3/4">
-          <div className="space-y-4">
-            {houses.map((house, index) => (
-              <House key={index} {...house} />
+        <main>
+          <div className="flex flex-col gap-6">
+            {houses.map((house) => (
+              <House key={house.slug} {...house} />
             ))}
           </div>
         </main>
       </div>
     </div>
-  )
+  );
 }

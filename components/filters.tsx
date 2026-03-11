@@ -3,213 +3,194 @@ import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Filters() {
-  const [areaValue, setAreaValue] = useState(50);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>('Todas');
   const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [areaValue, setAreaValue] = useState(50);
   const [selectedRooms, setSelectedRooms] = useState<string | null>(null);
   const [selectedBathrooms, setSelectedBathrooms] = useState<string | null>(null);
   const [hasPool, setHasPool] = useState(false);
   const [hasFurniture, setHasFurniture] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
-  const locations = ['Todas', 'Riviera', 'Ecoville 1', 'Ecoville 2', 'Porto Madeiro', 'Porto Seguro', 'Porto Unique', 'Porto Fino', 'Bourbon', 'Hectares'];
+  const locations = ['Todas', 'Riviera', 'Ecoville I', 'Ecoville II', 'Porto Madeiro', 'Porto Seguro', 'Porto Unique', 'Porto Fino', 'Bourbon', 'Hectares'];
 
   const formatPrice = (value: number | null) => {
     if (value === null || value === undefined) return '';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
   };
 
-  const handleLocationSelect = (location: string) => {
-    setSelectedLocation(location);
-    setIsLocationOpen(false);
-  };
+  const inputCls = "w-full bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.7)] px-[0.8rem] py-[0.6rem] font-oswald font-[200] text-[0.72rem] tracking-[0.05em] outline-none transition-[border-color] duration-[250ms] focus:border-[rgba(196,160,80,0.4)] placeholder:text-[rgba(255,255,255,0.2)]";
+
+  const labelCls = "font-oswald font-[200] text-[0.58rem] tracking-[0.3em] text-[rgba(255,255,255,0.4)] uppercase mb-[0.7rem] flex justify-between items-center";
+
+  const divider = <div className="h-px bg-[rgba(196,160,80,0.08)] my-6" />;
 
   return (
-    <aside className="lg:w-1/4 bg-gray-100 p-4 rounded-lg sticky top-4 h-fit">
-      <h2 className="text-lg poppins-semibold mb-4">Filtros</h2>
+    <aside className="bg-[#0d0d0d] border border-[rgba(196,160,80,0.12)] p-8 sticky top-[90px]">
+      <div className="font-oswald font-[300] text-[0.65rem] tracking-[0.45em] text-[rgba(196,160,80,0.8)] uppercase mb-8 pb-[1.2rem] border-b border-b-[rgba(196,160,80,0.12)]">
+        Filtros
+      </div>
+
+      {/* Min price */}
       <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm poppins-medium">Preço Mínimo</label>
-          {minPrice !== null && <span className="text-sm poppins-semibold text-yellow-600">{formatPrice(minPrice)}</span>}
+        <div className={labelCls}>
+          Preço mínimo
+          {minPrice !== null && <span className="text-[rgba(196,160,80,0.8)] tracking-[0.1em]">{formatPrice(minPrice)}</span>}
         </div>
-        <input 
-          type="number" 
+        <input
+          type="number"
           value={minPrice || ''}
           onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : null)}
-          className="w-full p-2 bg-white rounded-lg border border-slate-300" 
-          placeholder="R$ 0" 
+          className={inputCls}
+          placeholder="R$ 0"
         />
       </div>
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm poppins-medium">Preço Máximo</label>
-          {maxPrice !== null && <span className="text-sm poppins-semibold text-yellow-600">{formatPrice(maxPrice)}</span>}
+
+      {/* Max price */}
+      <div className="mb-5">
+        <div className={labelCls}>
+          Preço máximo
+          {maxPrice !== null && <span className="text-[rgba(196,160,80,0.8)] tracking-[0.1em]">{formatPrice(maxPrice)}</span>}
         </div>
-        <input 
-          type="number" 
+        <input
+          type="number"
           value={maxPrice || ''}
           onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : null)}
-          className="w-full p-2 bg-white rounded-lg border border-slate-300" 
-          placeholder="R$ 1.000.000" 
+          className={inputCls}
+          placeholder="R$ 1.000.000"
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm poppins-medium mb-2">Localização</label>
+
+      {divider}
+
+      {/* Location */}
+      <div className="mb-5">
+        <div className={labelCls}>Localização</div>
         <div className="relative">
           <button
+            className="w-full bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.7)] px-[0.8rem] py-[0.6rem] font-oswald font-[200] text-[0.72rem] tracking-[0.05em] cursor-pointer flex justify-between items-center transition-[border-color] duration-[250ms] hover:border-[rgba(196,160,80,0.4)]"
             onClick={() => setIsLocationOpen(!isLocationOpen)}
-            className="w-full p-2 bg-white rounded-lg border border-slate-300 text-left flex justify-between items-center poppins-medium hover:border-yellow-500 transition"
           >
             {selectedLocation}
-            <span className={`transform transition-transform ${isLocationOpen ? 'rotate-180' : ''}`}>
-                <ChevronDown size={16} />
-            </span>
+            <ChevronDown
+              size={14}
+              style={{ transform: isLocationOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease', color: 'rgba(196,160,80,0.6)' }}
+            />
           </button>
-          <div
-            className={`absolute top-full left-0 right-0 mt-1 bg-white rounded-lg border border-slate-300 shadow-lg overflow-hidden transition-all duration-300 ease-out origin-top z-50 ${
-              isLocationOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-95 pointer-events-none'
-            }`}
-            style={{
-              transformOrigin: 'top',
-              transform: isLocationOpen ? 'scaleY(1)' : 'scaleY(0)',
-            }}
-          >
-            {locations.map((location) => (
-              <button
-                key={location}
-                onClick={() => handleLocationSelect(location)}
-                className={`w-full px-4 py-2 text-left poppins-medium transition-colors ${
-                  selectedLocation === location
-                    ? 'bg-yellow-600 text-white'
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                {location}
-              </button>
-            ))}
-          </div>
+          {isLocationOpen && (
+            <div className="absolute top-full left-0 right-0 bg-[#111] border border-[rgba(196,160,80,0.2)] border-t-0 z-50 max-h-[220px] overflow-y-auto">
+              {locations.map((loc) => (
+                <button
+                  key={loc}
+                  className={`w-full px-[0.8rem] py-[0.6rem] font-oswald font-[200] text-[0.7rem] tracking-[0.05em] bg-transparent border-none cursor-pointer text-left transition-all duration-200 hover:bg-[rgba(196,160,80,0.06)] hover:text-[rgba(255,255,255,0.85)] ${selectedLocation === loc ? 'text-[rgba(196,160,80,0.9)] bg-[rgba(196,160,80,0.06)]' : 'text-[rgba(255,255,255,0.55)]'}`}
+                  onClick={() => { setSelectedLocation(loc); setIsLocationOpen(false); }}
+                >
+                  {loc}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm poppins-medium">Área (m²)</label>
-          <span className="text-sm poppins-semibold text-yellow-600">{areaValue}m²</span>
+
+      {divider}
+
+      {/* Area */}
+      <div className="mb-5">
+        <div className={labelCls}>
+          Área mínima
+          <span className="text-[rgba(196,160,80,0.8)] tracking-[0.1em]">{areaValue}m²</span>
         </div>
-        <input 
-          type="range" 
-          min="50" 
-          max="2000" 
-          step="10" 
+        <input
+          type="range"
+          min="50"
+          max="2000"
+          step="10"
           value={areaValue}
           onChange={(e) => setAreaValue(Number(e.target.value))}
-          className="w-full" 
+          className="filter-range"
         />
-        <div className="text-xs text-gray-600 flex justify-between">
-          <span>50m²</span>
-          <span>2000m²</span>
+        <div className="flex justify-between mt-[0.4rem]">
+          <span className="font-oswald font-[200] text-[0.55rem] tracking-[0.15em] text-[rgba(255,255,255,0.2)]">50m²</span>
+          <span className="font-oswald font-[200] text-[0.55rem] tracking-[0.15em] text-[rgba(255,255,255,0.2)]">2000m²</span>
         </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm poppins-medium mb-2">Quartos</label>
+
+      {divider}
+
+      {/* Rooms */}
+      <div className="mb-5">
+        <div className={labelCls}>Quartos</div>
         <div className="flex gap-2">
-          <button 
-            onClick={() => setSelectedRooms(selectedRooms === '2+' ? null : '2+')}
-            className={`flex-1 py-2 px-2 rounded-lg text-sm poppins-medium transition ${
-              selectedRooms === '2+' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            2+
-          </button>
-          <button 
-            onClick={() => setSelectedRooms(selectedRooms === '3+' ? null : '3+')}
-            className={`flex-1 py-2 px-2 rounded-lg text-sm poppins-medium transition ${
-              selectedRooms === '3+' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            3+
-          </button>
-          <button 
-            onClick={() => setSelectedRooms(selectedRooms === '4+' ? null : '4+')}
-            className={`flex-1 py-2 px-2 rounded-lg text-sm poppins-medium transition ${
-              selectedRooms === '4+' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            4+
-          </button>
+          {['2+', '3+', '4+'].map((v) => (
+            <button
+              key={v}
+              className={`flex-1 py-2 font-oswald font-[200] text-[0.65rem] tracking-[0.15em] cursor-pointer transition-all duration-200 text-center border ${selectedRooms === v ? 'border-[rgba(196,160,80,0.6)] bg-[rgba(196,160,80,0.1)] text-[rgba(196,160,80,0.9)]' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.4)] hover:border-[rgba(196,160,80,0.3)] hover:text-[rgba(255,255,255,0.6)]'}`}
+              onClick={() => setSelectedRooms(selectedRooms === v ? null : v)}
+            >
+              {v}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm poppins-medium mb-2">Banheiros</label>
+
+      {/* Bathrooms */}
+      <div className="mb-5">
+        <div className={labelCls}>Banheiros</div>
         <div className="flex gap-2">
-          <button 
-            onClick={() => setSelectedBathrooms(selectedBathrooms === '2+' ? null : '2+')}
-            className={`flex-1 py-2 px-2 rounded-lg text-sm poppins-medium transition ${
-              selectedBathrooms === '2+' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            2+
-          </button>
-          <button 
-            onClick={() => setSelectedBathrooms(selectedBathrooms === '3+' ? null : '3+')}
-            className={`flex-1 py-2 px-2 rounded-lg text-sm poppins-medium transition ${
-              selectedBathrooms === '3+' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            3+
-          </button>
-          <button 
-            onClick={() => setSelectedBathrooms(selectedBathrooms === '4+' ? null : '4+')}
-            className={`flex-1 py-2 px-2 rounded-lg text-sm poppins-medium transition ${
-              selectedBathrooms === '4+' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            4+
-          </button>
+          {['2+', '3+', '4+'].map((v) => (
+            <button
+              key={v}
+              className={`flex-1 py-2 font-oswald font-[200] text-[0.65rem] tracking-[0.15em] cursor-pointer transition-all duration-200 text-center border ${selectedBathrooms === v ? 'border-[rgba(196,160,80,0.6)] bg-[rgba(196,160,80,0.1)] text-[rgba(196,160,80,0.9)]' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.4)] hover:border-[rgba(196,160,80,0.3)] hover:text-[rgba(255,255,255,0.6)]'}`}
+              onClick={() => setSelectedBathrooms(selectedBathrooms === v ? null : v)}
+            >
+              {v}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <input 
-            type="checkbox" 
-            id="pool"
-            checked={hasPool}
-            onChange={(e) => setHasPool(e.target.checked)}
-            className="cursor-pointer"
-          />
-          <label htmlFor="pool" className="text-sm poppins-medium cursor-pointer">Piscina</label>
+
+      {divider}
+
+      {/* Pool & Furnished */}
+      <div className="flex flex-col gap-[0.9rem] mb-5">
+        <div className="flex items-center gap-[0.8rem] cursor-pointer group/poolcheck" onClick={() => setHasPool(!hasPool)}>
+          <div className={`filter-check-box w-[18px] h-[18px] min-w-[18px] border flex items-center justify-center transition-all duration-200 cursor-pointer ${hasPool ? 'checked border-[rgba(196,160,80,0.6)] bg-[rgba(196,160,80,0.1)]' : 'border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.03)]'}`} />
+          <span className="font-oswald font-[200] text-[0.68rem] tracking-[0.2em] text-[rgba(255,255,255,0.5)] uppercase cursor-pointer transition-colors duration-200 group-hover/poolcheck:text-[rgba(255,255,255,0.75)]">
+            Piscina
+          </span>
+        </div>
+        <div className="flex items-center gap-[0.8rem] cursor-pointer group/furncheck" onClick={() => setHasFurniture(!hasFurniture)}>
+          <div className={`filter-check-box w-[18px] h-[18px] min-w-[18px] border flex items-center justify-center transition-all duration-200 cursor-pointer ${hasFurniture ? 'checked border-[rgba(196,160,80,0.6)] bg-[rgba(196,160,80,0.1)]' : 'border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.03)]'}`} />
+          <span className="font-oswald font-[200] text-[0.68rem] tracking-[0.2em] text-[rgba(255,255,255,0.5)] uppercase cursor-pointer transition-colors duration-200 group-hover/furncheck:text-[rgba(255,255,255,0.75)]">
+            Mobiliado
+          </span>
         </div>
       </div>
-      <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <input 
-            type="checkbox" 
-            id="furniture"
-            checked={hasFurniture}
-            onChange={(e) => setHasFurniture(e.target.checked)}
-            className="cursor-pointer"
-          />
-          <label htmlFor="furniture" className="text-sm poppins-medium cursor-pointer">Mobíliado</label>
+
+      {divider}
+
+      {/* Status */}
+      <div className="mb-5">
+        <div className={labelCls}>Status</div>
+        <div className="flex flex-col gap-2">
+          {['Em construção', 'Finalizado'].map((status) => (
+            <button
+              key={status}
+              className={`w-full px-[0.8rem] py-[0.5rem] font-oswald font-[200] text-[0.65rem] tracking-[0.15em] cursor-pointer transition-all duration-200 text-center border ${selectedStatus === status ? 'border-[rgba(196,160,80,0.6)] bg-[rgba(196,160,80,0.1)] text-[rgba(196,160,80,0.9)]' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.4)] hover:border-[rgba(196,160,80,0.3)] hover:text-[rgba(255,255,255,0.6)]'}`}
+              onClick={() => setSelectedStatus(selectedStatus === status ? null : status)}
+            >
+              {status}
+            </button>
+          ))}
         </div>
       </div>
-      <button className="w-full bg-yellow-600 text-white p-2 rounded-lg poppins-medium hover:scale-105 transition">Aplicar Filtros</button>
+
+      <button className="w-full mt-8 py-[0.8rem] bg-[rgba(196,160,80,0.08)] border border-[rgba(196,160,80,0.35)] text-[rgba(196,160,80,0.85)] font-oswald font-[300] text-[0.6rem] tracking-[0.45em] uppercase cursor-pointer transition-all duration-[250ms] hover:bg-[rgba(196,160,80,0.14)] hover:border-[rgba(196,160,80,0.7)] hover:text-[rgba(196,160,80,1)]">
+        Aplicar filtros
+      </button>
     </aside>
   );
 }
