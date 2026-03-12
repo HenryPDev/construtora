@@ -13,7 +13,7 @@ interface HouseProps {
   bathrooms?: number;
   hasPool?: boolean;
   isFurnished?: boolean;
-  status?: 'Em construção' | 'Finalizado';
+  status?: string;
 }
 
 export default function House({

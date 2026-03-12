@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:\\\\Users\\\\Henry\\\\Documents\\\\GitHub\\\\backend-construtora\" && npm run build 2>&1 | tail -3)",
+      "Bash(pkill -9 -f node 2>/dev/null || true\nsleep 2\necho \"All Node processes killed\")"
+    ]
+  }
+}

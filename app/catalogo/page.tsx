@@ -1,6 +1,7 @@
 import House from "@/components/house";
 import Filters from "@/components/filters";
-import { houses } from "@/lib/houses";
+import Pagination from "@/components/pagination";
+import { getHouses } from "@/lib/api";
 
 export const metadata = {
   title: "Catálogo – Zeferino & Correa",
@@ -14,22 +15,27 @@ interface CatalogoProps {
 export default async function Catalogo({ searchParams }: CatalogoProps) {
   const params = await searchParams;
 
-  // Convert params to filter criteria
-  const filteredHouses = houses.filter((house) => {
-    if (params.location && params.location !== 'Todas' && house.location !== params.location) return false;
-    if (params.minArea && house.area && house.area < Number(params.minArea)) return false;
-    if (params.bedrooms && house.bedrooms && house.bedrooms < Number(params.bedrooms)) return false;
-    if (params.bathrooms && house.bathrooms && house.bathrooms < Number(params.bathrooms)) return false;
-    if (params.hasPool === 'true' && !house.hasPool) return false;
-    if (params.isFurnished === 'true' && !house.isFurnished) return false;
-    if (params.status && house.status !== params.status) return false;
-    return true;
+  // Convert params to proper format for API
+  const apiParams: Record<string, string> = {};
+  let currentPage = 1;
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      if (key === 'page') {
+        currentPage = Math.max(1, parseInt(value) || 1);
+      } else {
+        apiParams[key] = value;
+      }
+    }
   });
+
+  // Fetch houses from API with filters and pagination
+  const response = await getHouses(apiParams, currentPage);
 
   // Convert params to initialValues format for Filters component
   const initialValues = Object.entries(params).reduce(
     (acc, [key, value]) => {
-      if (typeof value === 'string') {
+      if (typeof value === 'string' && key !== 'page') {
         acc[key as keyof typeof acc] = value;
       }
       return acc;
@@ -55,16 +61,29 @@ export default async function Catalogo({ searchParams }: CatalogoProps) {
         <Filters initialValues={initialValues} />
         <main>
           <div className="flex flex-col gap-6">
-            {filteredHouses.length > 0 ? (
-              filteredHouses.map((house) => (
+            {response?.data && response.data.length > 0 ? (
+              response.data.map((house) => (
                 <House key={house.slug} {...house} />
               ))
             ) : (
               <div className="text-center py-12">
                 <p className="font-oswald font-[200] text-[0.85rem] tracking-[0.05em] text-[rgba(255,255,255,0.4)]">
-                  Nenhum imóvel encontrado com os filtros selecionados.
+                  {response?.data === undefined
+                    ? 'Erro ao carregar imóveis. Por favor, tente novamente.'
+                    : 'Nenhum imóvel encontrado com os filtros selecionados.'}
                 </p>
               </div>
+            )}
+
+            {/* Pagination */}
+            {response?.pagination && response.pagination.totalPages > 0 && (
+              <Pagination
+                currentPage={response.pagination.page}
+                totalPages={response.pagination.totalPages}
+                total={response.pagination.total}
+                limit={response.pagination.limit}
+                searchParams={initialValues}
+              />
             )}
           </div>
         </main>

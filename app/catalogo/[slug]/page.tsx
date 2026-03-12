@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { houses } from "@/lib/houses";
+import { getHouseBySlug, getHouses } from "@/lib/api";
 import { Bed, Bath, Waves, Ruler, MapPin, Sofa, ArrowLeft } from "lucide-react";
 
-export function generateStaticParams() {
-  return houses.map((h) => ({ slug: h.slug }));
+export async function generateStaticParams() {
+  try {
+    const response = await getHouses();
+    return response?.data?.map((h) => ({ slug: h.slug })) || [];
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const house = houses.find((h) => h.slug === slug);
+  const house = await getHouseBySlug(slug);
   if (!house) return {};
   return {
     title: `${house.title} – Zeferino & Correa`,
@@ -19,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CasaDetalhe({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const house = houses.find((h) => h.slug === slug);
+  const house = await getHouseBySlug(slug);
   if (!house) notFound();
 
   const [hero, ...gallery] = house.images;
