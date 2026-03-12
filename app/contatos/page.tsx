@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
-import ContactForm from '@/components/contact-form';
 
 export const metadata = {
   title: "Contato – Zeferino & Correa",
@@ -179,20 +178,6 @@ export default function Contatos() {
             </div>
           </div>
         </article>
-      </div>
-
-      {/* Contact form section */}
-      <div className="max-w-[1200px] mx-auto px-10 py-16">
-        <p className="font-oswald font-[200] text-[0.6rem] tracking-[0.55em] text-[rgba(196,160,80,0.8)] uppercase mb-4">
-          Envie uma Mensagem
-        </p>
-        <h2 className="font-cormorant font-[300] text-[clamp(2rem,4vw,3.5rem)] text-white tracking-[0.06em] leading-[1.1] mb-12">
-          Preencha o <em className="italic text-[rgba(255,255,255,0.65)]">formulário</em>
-        </h2>
-
-        <div className="max-w-[600px]">
-          <ContactForm />
-        </div>
       </div>
     </div>
   );
