@@ -1,5 +1,6 @@
 import House from "@/components/house";
-import Filters from "@/components/filters";
+import FilterDrawer from "@/components/filter-drawer";
+import CatalogNav from "@/components/catalog-nav";
 import Pagination from "@/components/pagination";
 import Footer from "@/components/footer";
 import { getHouses } from "@/lib/api";
@@ -30,8 +31,8 @@ export default async function Catalogo({ searchParams }: CatalogoProps) {
     }
   });
 
-  // Fetch houses from API with filters and pagination
-  const response = await getHouses(apiParams, currentPage);
+  // Fetch houses from API with filters and pagination (catalog view)
+  const response = await getHouses(apiParams, currentPage, 'catalog');
 
   // Convert params to initialValues format for Filters component
   const initialValues = Object.entries(params).reduce(
@@ -58,8 +59,10 @@ export default async function Catalogo({ searchParams }: CatalogoProps) {
         </p>
       </div>
 
+      <CatalogNav />
+
       <div className="max-w-[1200px] mx-auto px-10 py-12 pb-24 grid grid-cols-1 min-[900px]:grid-cols-[280px_1fr] gap-12 items-start">
-        <Filters initialValues={initialValues} />
+        <FilterDrawer initialValues={initialValues} />
         <main>
           <div className="flex flex-col gap-6">
             {response?.data && response.data.length > 0 ? (

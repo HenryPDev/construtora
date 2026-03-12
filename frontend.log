@@ -1,0 +1,92 @@
+
+> construtora@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.5.196.7:3000
+- Environments: .env.local, .env
+
+✓ Starting...
+✓ Ready in 955ms
+Error fetching houses: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+ GET /catalogo 200 in 2.0s (compile: 1792ms, render: 215ms)
+Error fetching houses: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+ GET /catalogo 200 in 54ms (compile: 3ms, render: 51ms)
+ GET /admin/casas/mato/editar 200 in 1083ms (compile: 950ms, render: 133ms)
+Error fetching houses: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+ GET /catalogo 200 in 27ms (compile: 3ms, render: 23ms)
+Error fetching houses: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+ GET /catalogo 200 in 26ms (compile: 3ms, render: 23ms)
+Error fetching houses: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+ GET /catalogo 200 in 24ms (compile: 3ms, render: 21ms)
+Error fetching houses: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+ GET /catalogo?status=Em+constru%C3%A7%C3%A3o 200 in 23ms (compile: 2ms, render: 20ms)
+ GET /admin/casas 200 in 269ms (compile: 255ms, render: 14ms)
+ GET / 200 in 379ms (compile: 335ms, render: 44ms)
+ GET /admin/casas 200 in 42ms (compile: 3ms, render: 39ms)
+ GET /catalogo?status=Em+constru%C3%A7%C3%A3o 200 in 73ms (compile: 3ms, render: 70ms)
+ GET /catalogo 200 in 45ms (compile: 3ms, render: 42ms)
+ GET /catalogo/mato 200 in 749ms (compile: 702ms, generate-params: 457ms, render: 47ms)
+ GET / 200 in 12ms (compile: 2ms, render: 10ms)
+ GET /contatos 200 in 289ms (compile: 260ms, render: 29ms)
+✓ Compiled in 105ms
+✓ Compiled in 47ms
+ GET /admin/casas 200 in 45ms (compile: 3ms, render: 42ms)
+ GET /contatos 200 in 46ms (compile: 19ms, render: 27ms)
+✓ Compiled in 67ms
+ GET /admin/casas 200 in 48ms (compile: 30ms, render: 18ms)
+ GET /contatos 200 in 53ms (compile: 3ms, render: 50ms)
+ GET /catalogo 200 in 335ms (compile: 79ms, render: 256ms)
+ GET /catalogo 200 in 81ms (compile: 3ms, render: 78ms)
+ GET /projetos 200 in 282ms (compile: 245ms, render: 37ms)
+ GET /projetos 200 in 60ms (compile: 3ms, render: 57ms)
+ GET /catalogo 200 in 44ms (compile: 3ms, render: 41ms)
+An empty string ("") was passed to the src attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to src instead of an empty string.
+ GET /catalogo/casa123 200 in 192ms (compile: 31ms, generate-params: 26ms, render: 161ms)
+ GET /admin/casas/casa123/editar 200 in 30ms (compile: 14ms, render: 15ms)
+ GET /admin/casas 200 in 14ms (compile: 2ms, render: 12ms)
+ GET /admin/casas/mato/editar 200 in 30ms (compile: 13ms, render: 17ms)
+ GET /catalogo 200 in 78ms (compile: 3ms, render: 75ms)
+ GET /admin/casas 200 in 21ms (compile: 3ms, render: 18ms)
+ GET /catalogo 200 in 36ms (compile: 3ms, render: 34ms)
+ GET /projetos 200 in 39ms (compile: 3ms, render: 37ms)
+ GET /projetos 200 in 44ms (compile: 3ms, render: 41ms)
+ GET /catalogo 200 in 37ms (compile: 2ms, render: 35ms)
+ GET /projetos 200 in 42ms (compile: 3ms, render: 39ms)
+ GET /catalogo 200 in 38ms (compile: 2ms, render: 36ms)
+ GET /catalogo/mato 200 in 66ms (compile: 13ms, generate-params: 11ms, render: 53ms)
+ GET /contatos 200 in 25ms (compile: 2ms, render: 23ms)
+ GET /catalogo 200 in 178ms (compile: 3ms, render: 175ms)
+ GET /projetos 200 in 47ms (compile: 9ms, render: 38ms)
+ GET / 200 in 16ms (compile: 2ms, render: 14ms)

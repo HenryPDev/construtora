@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Footer from "@/components/footer";
+import CatalogNav from "@/components/catalog-nav";
 import { getHouses } from "@/lib/api";
 import { statusConfig, Status } from "@/lib/projects";
 
@@ -16,7 +17,7 @@ const defaultStatusConfig = {
 };
 
 export default async function Projetos() {
-  const response = await getHouses({});
+  const response = await getHouses({}, 1, 'project');
   const projects = response.data;
 
   return (
@@ -40,6 +41,8 @@ export default async function Projetos() {
           </div>
         </div>
       </div>
+
+      <CatalogNav />
 
       {/* Projects grid */}
       <div className="max-w-[1400px] mx-auto px-10 py-16 pb-24">

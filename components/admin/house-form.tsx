@@ -86,6 +86,8 @@ export default function HouseForm({ house, onSuccess, onBack }: HouseFormProps) 
       bathrooms: undefined,
       hasPool: false,
       isFurnished: false,
+      showInCatalog: true,
+      showInProject: true,
       status: 'Disponível',
       style: '',
       yearDelivery: new Date().getFullYear().toString(),
@@ -189,6 +191,8 @@ export default function HouseForm({ house, onSuccess, onBack }: HouseFormProps) 
         bathrooms: formData.bathrooms ? parseInt(String(formData.bathrooms)) : undefined,
         hasPool: formData.hasPool || false,
         isFurnished: formData.isFurnished || false,
+        showInCatalog: formData.showInCatalog !== false,
+        showInProject: formData.showInProject !== false,
         status: formData.status,
         style: formData.style,
         yearDelivery: formData.yearDelivery,
@@ -424,7 +428,7 @@ export default function HouseForm({ house, onSuccess, onBack }: HouseFormProps) 
           </select>
         </div>
 
-        <div className="flex gap-6">
+        <div className="flex gap-6 flex-wrap">
           <label className="flex items-center gap-2 font-oswald text-sm text-[rgba(196,160,80,0.7)] cursor-pointer hover:text-[rgba(196,160,80,0.9)]">
             <input
               type="checkbox"
@@ -443,6 +447,33 @@ export default function HouseForm({ house, onSuccess, onBack }: HouseFormProps) 
             />
             Mobiliado
           </label>
+          <div className="flex flex-col gap-3">
+            <label className="flex items-center gap-2 font-oswald text-sm text-[rgba(34,197,94,0.7)] cursor-pointer hover:text-[rgba(34,197,94,0.9)]">
+              <input
+                type="checkbox"
+                checked={formData.showInCatalog !== false}
+                onChange={(e) => setFormData((prev) => ({ ...prev, showInCatalog: e.target.checked }))}
+                className="w-4 h-4"
+              />
+              Catálogo
+            </label>
+            <p className="text-xs text-[rgba(255,255,255,0.4)] ml-6">
+              {formData.showInCatalog ? '✓ Visível no catálogo público' : '✗ Oculto do catálogo público'}
+            </p>
+
+            <label className="flex items-center gap-2 font-oswald text-sm text-[rgba(34,197,94,0.7)] cursor-pointer hover:text-[rgba(34,197,94,0.9)]">
+              <input
+                type="checkbox"
+                checked={formData.showInProject !== false}
+                onChange={(e) => setFormData((prev) => ({ ...prev, showInProject: e.target.checked }))}
+                className="w-4 h-4"
+              />
+              Projeto
+            </label>
+            <p className="text-xs text-[rgba(255,255,255,0.4)] ml-6">
+              {formData.showInProject ? '✓ Visível no painel de projetos' : '✗ Oculto do painel de projetos'}
+            </p>
+          </div>
         </div>
       </div>
 

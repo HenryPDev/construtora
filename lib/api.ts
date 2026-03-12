@@ -13,6 +13,8 @@ export interface House {
   bathrooms?: number;
   hasPool?: boolean;
   isFurnished?: boolean;
+  showInCatalog?: boolean;
+  showInProject?: boolean;
   status?: string;
   style?: string;
   yearDelivery?: string;
@@ -42,10 +44,11 @@ export interface HousesResponse {
   pagination: PaginationMeta;
 }
 
-export async function getHouses(filters?: FilterParams, page: number = 1): Promise<HousesResponse> {
+export async function getHouses(filters?: FilterParams, page: number = 1, view: 'catalog' | 'project' = 'catalog'): Promise<HousesResponse> {
   try {
     const queryParams = new URLSearchParams();
     queryParams.append('page', String(page));
+    queryParams.append('view', view);
 
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -86,9 +89,13 @@ export async function getHouseBySlug(slug: string): Promise<House | null> {
   }
 }
 
-export async function getAllHouses(): Promise<House[]> {
+export async function getAllHouses(view?: 'catalog' | 'project'): Promise<House[]> {
   try {
-    const response = await fetch(`${API_URL}/api/houses?limit=1000`, {
+    let url = `${API_URL}/api/houses?limit=1000`;
+    if (view) {
+      url += `&view=${view}`;
+    }
+    const response = await fetch(url, {
       cache: 'no-store',
     });
 
