@@ -1,6 +1,7 @@
 import House from "@/components/house";
 import Filters from "@/components/filters";
 import Pagination from "@/components/pagination";
+import Footer from "@/components/footer";
 import { getHouses } from "@/lib/api";
 
 export const metadata = {
@@ -88,6 +89,8 @@ export default async function Catalogo({ searchParams }: CatalogoProps) {
           </div>
         </main>
       </div>
+
+      <Footer />
     </div>
   );
 }

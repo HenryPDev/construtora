@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Footer from "@/components/footer";
 import { projects, statusConfig, Status } from "@/lib/projects";
 
 export const metadata = {
@@ -105,6 +106,8 @@ export default function Projetos() {
           Entre em contato
         </Link>
       </div>
+
+      <Footer />
     </div>
   );
 }

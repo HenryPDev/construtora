@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Footer from "@/components/footer";
 
 const panels = [
   { image: "/images/casa2.jpg", label: "FUNDAÇÕES", num: "01" },
@@ -222,6 +223,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </>
   );
 }
