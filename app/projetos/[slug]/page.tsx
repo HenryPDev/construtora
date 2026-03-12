@@ -14,12 +14,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+// Default config for invalid status
+const defaultStatusConfig = {
+  color: "text-[rgba(196,160,80,0.9)] border-[rgba(196,160,80,0.4)] bg-[rgba(196,160,80,0.15)]",
+  dot: "bg-[rgba(196,160,80,0.9)]",
+  shadow: "shadow-[0_0_12px_rgba(196,160,80,0.3)]",
+};
+
 export default async function ProjetoDetalhe({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getHouseBySlug(slug);
   if (!project) notFound();
 
-  const cfg = statusConfig[project.status];
+  const cfg = statusConfig[project.status as keyof typeof statusConfig] || defaultStatusConfig;
   const hero = project.image;
   const rest = project.images || [];
 

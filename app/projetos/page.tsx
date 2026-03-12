@@ -8,6 +8,13 @@ export const metadata = {
   description: "Conheça os projetos em andamento e planejamento da Zeferino & Correa.",
 };
 
+// Default config for invalid status
+const defaultStatusConfig = {
+  color: "text-[rgba(196,160,80,0.9)] border-[rgba(196,160,80,0.4)] bg-[rgba(196,160,80,0.15)]",
+  dot: "bg-[rgba(196,160,80,0.9)]",
+  shadow: "shadow-[0_0_12px_rgba(196,160,80,0.3)]",
+};
+
 export default async function Projetos() {
   const response = await getHouses({});
   const projects = response.data;
@@ -37,7 +44,9 @@ export default async function Projetos() {
       {/* Projects grid */}
       <div className="max-w-[1400px] mx-auto px-10 py-16 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[rgba(196,160,80,0.1)]">
-          {projects.map((project, i) => (
+          {projects.map((project, i) => {
+            const config = statusConfig[project.status as keyof typeof statusConfig] || defaultStatusConfig;
+            return (
             <Link
               key={project.slug}
               href={`/projetos/${project.slug}`}
@@ -54,9 +63,9 @@ export default async function Projetos() {
               <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.9)_0%,rgba(0,0,0,0.3)_50%,rgba(0,0,0,0.1)_100%)] transition-opacity duration-500 group-hover/proj:opacity-80" />
 
               {/* Status badge */}
-              <div className={`absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full border backdrop-blur-md font-oswald font-[300] text-[0.58rem] tracking-[0.2em] uppercase ${statusConfig[project.status].color} ${statusConfig[project.status].shadow}`}>
-                <div className={`w-1 h-1 rounded-full ${statusConfig[project.status].dot}`} />
-                {project.status}
+              <div className={`absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full border backdrop-blur-md font-oswald font-[300] text-[0.58rem] tracking-[0.2em] uppercase ${config.color} ${config.shadow}`}>
+                <div className={`w-1 h-1 rounded-full ${config.dot}`} />
+                {project.status || 'Sem status'}
               </div>
 
               {/* Index */}
@@ -89,7 +98,8 @@ export default async function Projetos() {
               {/* Gold bottom line on hover */}
               <div className="absolute bottom-0 left-0 right-0 h-px bg-[linear-gradient(90deg,transparent,rgba(196,160,80,0.6),transparent)] scale-x-0 group-hover/proj:scale-x-100 transition-transform duration-500" />
             </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
 
