@@ -65,11 +65,6 @@ export default async function CasaDetalhe({ params }: { params: Promise<{ slug: 
           <h1 className="font-cormorant font-[300] text-[clamp(3rem,6vw,6rem)] text-white tracking-[0.06em] leading-[0.95]">
             {house.title}
           </h1>
-          {house.price && (
-            <p className="font-cormorant font-[300] text-[clamp(1.8rem,3vw,2.8rem)] text-[rgba(196,160,80,0.9)] tracking-[0.06em] mt-3">
-              {house.price}
-            </p>
-          )}
         </div>
       </div>
 

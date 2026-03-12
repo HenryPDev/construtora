@@ -1,24 +1,44 @@
 'use client';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
-export default function Filters() {
-  const [minPrice, setMinPrice] = useState<number | null>(null);
-  const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<string>('Todas');
+interface FiltersProps {
+  initialValues?: {
+    location?: string;
+    minArea?: string;
+    bedrooms?: string;
+    bathrooms?: string;
+    hasPool?: string;
+    isFurnished?: string;
+    status?: string;
+  };
+}
+
+export default function Filters({ initialValues }: FiltersProps) {
+  const router = useRouter();
+  const [selectedLocation, setSelectedLocation] = useState<string>(initialValues?.location || 'Todas');
   const [isLocationOpen, setIsLocationOpen] = useState(false);
-  const [areaValue, setAreaValue] = useState(50);
-  const [selectedRooms, setSelectedRooms] = useState<string | null>(null);
-  const [selectedBathrooms, setSelectedBathrooms] = useState<string | null>(null);
-  const [hasPool, setHasPool] = useState(false);
-  const [hasFurniture, setHasFurniture] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [areaValue, setAreaValue] = useState(Number(initialValues?.minArea) || 50);
+  const [selectedRooms, setSelectedRooms] = useState<string | null>(initialValues?.bedrooms || null);
+  const [selectedBathrooms, setSelectedBathrooms] = useState<string | null>(initialValues?.bathrooms || null);
+  const [hasPool, setHasPool] = useState(initialValues?.hasPool === 'true');
+  const [hasFurniture, setHasFurniture] = useState(initialValues?.isFurnished === 'true');
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(initialValues?.status || null);
 
-  const locations = ['Todas', 'Riviera', 'Ecoville I', 'Ecoville II', 'Porto Madeiro', 'Porto Seguro', 'Porto Unique', 'Porto Fino', 'Bourbon', 'Hectares'];
+  const locations = ['Todas', 'Riviera', 'Ecoville 1', 'Ecoville 2', 'Porto Madeiro', 'Porto Seguro'];
 
-  const formatPrice = (value: number | null) => {
-    if (value === null || value === undefined) return '';
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+  const applyFilters = () => {
+    const params = new URLSearchParams();
+    if (selectedLocation && selectedLocation !== 'Todas') params.append('location', selectedLocation);
+    if (areaValue > 50) params.append('minArea', String(areaValue));
+    if (selectedRooms) params.append('bedrooms', selectedRooms.replace('+', ''));
+    if (selectedBathrooms) params.append('bathrooms', selectedBathrooms.replace('+', ''));
+    if (hasPool) params.append('hasPool', 'true');
+    if (hasFurniture) params.append('isFurnished', 'true');
+    if (selectedStatus) params.append('status', selectedStatus);
+
+    router.push(`/catalogo?${params.toString()}`);
   };
 
   const inputCls = "w-full bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.7)] px-[0.8rem] py-[0.6rem] font-oswald font-[200] text-[0.72rem] tracking-[0.05em] outline-none transition-[border-color] duration-[250ms] focus:border-[rgba(196,160,80,0.4)] placeholder:text-[rgba(255,255,255,0.2)]";
@@ -33,37 +53,6 @@ export default function Filters() {
         Filtros
       </div>
 
-      {/* Min price */}
-      <div className="mb-4">
-        <div className={labelCls}>
-          Preço mínimo
-          {minPrice !== null && <span className="text-[rgba(196,160,80,0.8)] tracking-[0.1em]">{formatPrice(minPrice)}</span>}
-        </div>
-        <input
-          type="number"
-          value={minPrice || ''}
-          onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : null)}
-          className={inputCls}
-          placeholder="R$ 0"
-        />
-      </div>
-
-      {/* Max price */}
-      <div className="mb-5">
-        <div className={labelCls}>
-          Preço máximo
-          {maxPrice !== null && <span className="text-[rgba(196,160,80,0.8)] tracking-[0.1em]">{formatPrice(maxPrice)}</span>}
-        </div>
-        <input
-          type="number"
-          value={maxPrice || ''}
-          onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : null)}
-          className={inputCls}
-          placeholder="R$ 1.000.000"
-        />
-      </div>
-
-      {divider}
 
       {/* Location */}
       <div className="mb-5">
@@ -188,7 +177,10 @@ export default function Filters() {
         </div>
       </div>
 
-      <button className="w-full mt-8 py-[0.8rem] bg-[rgba(196,160,80,0.08)] border border-[rgba(196,160,80,0.35)] text-[rgba(196,160,80,0.85)] font-oswald font-[300] text-[0.6rem] tracking-[0.45em] uppercase cursor-pointer transition-all duration-[250ms] hover:bg-[rgba(196,160,80,0.14)] hover:border-[rgba(196,160,80,0.7)] hover:text-[rgba(196,160,80,1)]">
+      <button
+        onClick={applyFilters}
+        className="w-full mt-8 py-[0.8rem] bg-[rgba(196,160,80,0.08)] border border-[rgba(196,160,80,0.35)] text-[rgba(196,160,80,0.85)] font-oswald font-[300] text-[0.6rem] tracking-[0.45em] uppercase cursor-pointer transition-all duration-[250ms] hover:bg-[rgba(196,160,80,0.14)] hover:border-[rgba(196,160,80,0.7)] hover:text-[rgba(196,160,80,1)]"
+      >
         Aplicar filtros
       </button>
     </aside>
