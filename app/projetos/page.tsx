@@ -1,13 +1,17 @@
 import Link from "next/link";
 import Footer from "@/components/footer";
-import { projects, statusConfig, Status } from "@/lib/projects";
+import { getHouses } from "@/lib/api";
+import { statusConfig, Status } from "@/lib/projects";
 
 export const metadata = {
   title: "Projetos – Zeferino & Correa",
   description: "Conheça os projetos em andamento e planejamento da Zeferino & Correa.",
 };
 
-export default function Projetos() {
+export default async function Projetos() {
+  const response = await getHouses({});
+  const projects = response.data;
+
   return (
     <div className="bg-[#070707] min-h-screen">
       {/* Hero header */}
@@ -63,14 +67,14 @@ export default function Projetos() {
               {/* Bottom content */}
               <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-2 group-hover/proj:translate-y-0 transition-transform duration-500">
                 <p className="font-oswald font-[200] text-[0.55rem] tracking-[0.35em] text-[rgba(196,160,80,0.7)] uppercase mb-2">
-                  {project.location} · {project.year}
+                  {project.location} · {project.yearDelivery || '—'}
                 </p>
                 <h2 className="font-cormorant font-[300] text-[1.5rem] text-white tracking-[0.05em] leading-[1.1] mb-4">
                   {project.title}
                 </h2>
                 <div className="flex items-center justify-between">
                   <span className="font-oswald font-[200] text-[0.6rem] tracking-[0.2em] text-[rgba(255,255,255,0.4)] uppercase">
-                    {project.area}
+                    {project.area ? `${project.area}m²` : '—'}
                   </span>
                   {/* Ver detalhes button */}
                   <span className="flex items-center gap-2 font-oswald font-[300] text-[0.58rem] tracking-[0.25em] text-[rgba(196,160,80,0.9)] uppercase border border-[rgba(196,160,80,0.4)] px-3 py-1.5 opacity-0 group-hover/proj:opacity-100 transition-all duration-400 bg-[rgba(196,160,80,0.08)] backdrop-blur-sm">

@@ -1,15 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { projects, statusConfig } from "@/lib/projects";
+import { getHouseBySlug } from "@/lib/api";
+import { statusConfig } from "@/lib/projects";
 import { Bed, Bath, Waves, Ruler, MapPin, ArrowLeft } from "lucide-react";
-
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getHouseBySlug(slug);
   if (!project) return {};
   return {
     title: `${project.title} – Zeferino & Correa`,
@@ -19,11 +16,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProjetoDetalhe({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getHouseBySlug(slug);
   if (!project) notFound();
 
   const cfg = statusConfig[project.status];
-  const [hero, ...rest] = project.images;
+  const hero = project.image;
+  const rest = project.images || [];
 
   return (
     <div className="bg-[#070707] min-h-screen">
@@ -54,7 +52,7 @@ export default async function ProjetoDetalhe({ params }: { params: Promise<{ slu
         {/* Bottom text over hero */}
         <div className="absolute bottom-0 left-0 right-0 max-w-[1200px] mx-auto px-10 pb-16">
           <p className="font-oswald font-[200] text-[0.6rem] tracking-[0.5em] text-[rgba(196,160,80,0.8)] uppercase mb-4">
-            {project.location} · {project.year}
+            {project.location} · {project.yearDelivery || '—'}
           </p>
           <h1 className="font-cormorant font-[300] text-[clamp(3rem,6vw,6rem)] text-white tracking-[0.06em] leading-[0.95]">
             {project.title}
@@ -82,13 +80,13 @@ export default async function ProjetoDetalhe({ params }: { params: Promise<{ slu
             </p>
 
             {[
-              { icon: <Ruler size={15} />, label: "Área", value: project.area },
-              { icon: <MapPin size={15} />, label: "Localização", value: project.location },
+              { icon: <Ruler size={15} />, label: "Área", value: project.area ? `${project.area}m²` : "—" },
+              { icon: <MapPin size={15} />, label: "Localização", value: project.location || "—" },
               ...(project.bedrooms !== undefined ? [{ icon: <Bed size={15} />, label: "Quartos", value: String(project.bedrooms) }] : []),
               ...(project.bathrooms !== undefined ? [{ icon: <Bath size={15} />, label: "Banheiros", value: String(project.bathrooms) }] : []),
               ...(project.hasPool !== undefined ? [{ icon: <Waves size={15} />, label: "Piscina", value: project.hasPool ? "Sim" : "Não" }] : []),
               { icon: null, label: "Estilo", value: project.style ?? "—" },
-              { icon: null, label: "Ano", value: project.year },
+              { icon: null, label: "Ano", value: project.yearDelivery ?? "—" },
             ].map(({ icon, label, value }) => (
               <div key={label} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 text-[rgba(196,160,80,0.6)]">
@@ -114,13 +112,15 @@ export default async function ProjetoDetalhe({ params }: { params: Promise<{ slu
           </p>
 
           {/* First photo wide */}
-          <div className="relative overflow-hidden aspect-[16/7] mb-3 group/g0">
-            <img
-              src={rest[0]}
-              alt={`${project.title} – foto 1`}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover/g0:scale-[1.04]"
-            />
-          </div>
+          {rest[0] && (
+            <div className="relative overflow-hidden aspect-[16/7] mb-3 group/g0">
+              <img
+                src={rest[0]}
+                alt={`${project.title} – foto 1`}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover/g0:scale-[1.04]"
+              />
+            </div>
+          )}
 
           {/* Remaining in a 3-col grid */}
           {rest.slice(1).length > 0 && (

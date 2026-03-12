@@ -279,3 +279,19 @@ input[type="checkbox"]:checked {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+/* Admin select styling */
+select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #070707;
+  color: white;
+}
+
+select option:checked {
+  background: linear-gradient(#c4a050, #c4a050);
+  background-color: #c4a050;
+  color: #070707;
+}

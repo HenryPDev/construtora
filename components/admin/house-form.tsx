@@ -4,9 +4,11 @@ import { FormEvent, useState, useEffect } from 'react';
 import { House, createHouse, updateHouse, isSlugAvailable } from '@/lib/api';
 import { X } from 'lucide-react';
 
+
 interface HouseFormProps {
   house?: House;
   onSuccess: (house: House) => void;
+  onBack?: () => void;
 }
 
 function generateSlug(title: string): string {
@@ -20,7 +22,54 @@ function generateSlug(title: string): string {
     .slice(0, 100);
 }
 
-export default function HouseForm({ house, onSuccess }: HouseFormProps) {
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const img = new Image();
+      img.src = reader.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+
+        // Calcular novas dimensões (max 400px para compressão MUITO agressiva)
+        let width = img.width;
+        let height = img.height;
+        const maxWidth = 400;
+        const maxHeight = 400;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Comprimir para JPEG com qualidade 0.5 (MUITO agressivo para suportar 30 imagens)
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
+        resolve(compressedBase64);
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+    };
+    reader.onerror = reject;
+  });
+}
+
+export default function HouseForm({ house, onSuccess, onBack }: HouseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [slugError, setSlugError] = useState<string | null>(null);
@@ -42,6 +91,40 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
       yearDelivery: new Date().getFullYear().toString(),
     }
   );
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'additional') => {
+    const files = e.target.files;
+    if (!files) return;
+
+    try {
+      if (type === 'main') {
+        // Para imagem principal, apenas a primeira
+        const file = files[0];
+        const base64 = await compressImage(file);
+        setFormData((prev) => ({ ...prev, image: base64 }));
+      } else {
+        // Para imagens adicionais, processar todas
+        const newImages: string[] = [];
+        for (let i = 0; i < files.length; i++) {
+          const base64 = await compressImage(files[i]);
+          newImages.push(base64);
+        }
+        setFormData((prev) => ({
+          ...prev,
+          images: [...(prev.images || []), ...newImages],
+        }));
+        setMessage({
+          type: 'success',
+          text: `${files.length} imagem(ns) adicionada(s) com sucesso!`
+        });
+      }
+      // Reset input
+      e.target.value = '';
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setMessage({ type: 'error', text: 'Erro ao fazer upload da(s) imagem(ns). Tente imagens menores.' });
+    }
+  };
 
   const handleTitleChange = (value: string) => {
     setFormData((prev) => ({
@@ -118,10 +201,6 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
         await createHouse(dataToSubmit);
         setMessage({ type: 'success', text: 'Imóvel criado com sucesso!' });
       }
-
-      setTimeout(() => {
-        onSuccess(dataToSubmit as House);
-      }, 1000);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao processar imóvel';
       setMessage({ type: 'error', text: errorMessage });
@@ -132,7 +211,34 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto p-6">
-      {/* Required Fields */}
+      {/* IMAGEM PRINCIPAL - TOPO */}
+      <div className="space-y-4">
+        <h2 className="font-oswald text-lg text-[rgba(196,160,80,0.9)] tracking-wide">Imagem Principal *</h2>
+        <div className="flex gap-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleImageUpload(e, 'main')}
+            className="flex-1 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-oswald file:bg-[rgba(196,160,80,0.2)] file:text-[rgba(196,160,80,0.9)] hover:file:bg-[rgba(196,160,80,0.3)] cursor-pointer"
+          />
+          {formData.image && (
+            <button
+              type="button"
+              onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+              className="px-4 py-2 text-[0.7rem] font-oswald tracking-widest uppercase text-[rgba(239,68,68,0.9)] border border-[rgba(239,68,68,0.4)] hover:bg-[rgba(239,68,68,0.1)] transition-colors"
+            >
+              Limpar
+            </button>
+          )}
+        </div>
+        {formData.image && (
+          <div className="p-4 bg-[rgba(255,255,255,0.05)] rounded border border-[rgba(196,160,80,0.2)]">
+            <img src={formData.image} alt="Preview" className="w-full max-h-96 object-cover rounded" />
+          </div>
+        )}
+      </div>
+
+      {/* Informações Básicas */}
       <div className="space-y-6">
         <h2 className="font-oswald text-lg text-[rgba(196,160,80,0.9)] tracking-wide">Informações Básicas *</h2>
 
@@ -164,7 +270,9 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
             }`}
             placeholder="slug-do-imovel"
           />
-          <p className="text-[0.7rem] text-[rgba(255,255,255,0.4)] mt-1">Gerado automaticamente, pode ser editado</p>
+          <p className="text-[0.7rem] text-[rgba(255,255,255,0.4)] mt-1">
+            Gerado automaticamente, pode ser editado
+          </p>
         </div>
 
         <div>
@@ -180,52 +288,39 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
             placeholder="Descrição detalhada do imóvel"
           />
         </div>
-
-        <div>
-          <label className="block font-oswald font-[200] text-[0.6rem] tracking-[0.3em] text-[rgba(196,160,80,0.8)] uppercase mb-2">
-            Imagem Principal (URL)
-          </label>
-          <input
-            type="url"
-            required
-            value={formData.image || ''}
-            onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
-            className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(196,160,80,0.2)] px-4 py-3 font-oswald font-[200] text-[0.85rem] tracking-[0.04em] text-white placeholder-[rgba(255,255,255,0.2)] focus:outline-none focus:border-[rgba(196,160,80,0.6)] transition-colors"
-            placeholder="https://exemplo.com/imagem.jpg"
-          />
-        </div>
       </div>
 
       {/* Images Array */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-oswald text-lg text-[rgba(196,160,80,0.9)] tracking-wide">Imagens Adicionais</h2>
-          <button
-            type="button"
-            onClick={addImage}
-            className="px-4 py-2 text-[0.7rem] font-oswald tracking-widest uppercase text-[rgba(196,160,80,0.9)] border border-[rgba(196,160,80,0.4)] hover:bg-[rgba(196,160,80,0.1)] transition-colors"
-          >
-            + Adicionar
-          </button>
+        <h2 className="font-oswald text-lg text-[rgba(196,160,80,0.9)] tracking-wide">Imagens Adicionais</h2>
+        <div>
+          <label className="block font-oswald font-[200] text-[0.6rem] tracking-[0.3em] text-[rgba(196,160,80,0.8)] uppercase mb-2">
+            Adicionar Imagens (pode selecionar múltiplas com Ctrl/Cmd + Click)
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => handleImageUpload(e, 'additional')}
+            className="w-full file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-oswald file:bg-[rgba(196,160,80,0.2)] file:text-[rgba(196,160,80,0.9)] hover:file:bg-[rgba(196,160,80,0.3)] cursor-pointer"
+          />
         </div>
-        {formData.images?.map((img, idx) => (
-          <div key={idx} className="flex gap-2">
-            <input
-              type="url"
-              value={img}
-              onChange={(e) => handleImageArrayChange(idx, e.target.value)}
-              className="flex-1 bg-[rgba(255,255,255,0.03)] border border-[rgba(196,160,80,0.2)] px-4 py-3 font-oswald font-[200] text-[0.85rem] tracking-[0.04em] text-white placeholder-[rgba(255,255,255,0.2)] focus:outline-none focus:border-[rgba(196,160,80,0.6)] transition-colors"
-              placeholder="https://exemplo.com/imagem.jpg"
-            />
-            <button
-              type="button"
-              onClick={() => removeImage(idx)}
-              className="p-3 hover:bg-[rgba(239,68,68,0.1)] rounded transition-colors"
-            >
-              <X size={18} className="text-[rgba(239,68,68,0.7)]" />
-            </button>
+        {formData.images && formData.images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {formData.images.map((img, idx) => (
+              <div key={idx} className="relative group">
+                <img src={img} alt={`Imagem ${idx + 1}`} className="w-full h-32 object-cover rounded border border-[rgba(196,160,80,0.2)]" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(idx)}
+                  className="absolute top-2 right-2 p-1 bg-[rgba(239,68,68,0.8)] hover:bg-[rgba(239,68,68,1)] rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X size={16} className="text-white" />
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
       {/* Additional Info */}
@@ -319,7 +414,7 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
           <select
             value={formData.status || ''}
             onChange={(e) => setFormData((prev) => ({ ...prev, status: e.target.value }))}
-            className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(196,160,80,0.2)] px-4 py-3 font-oswald font-[200] text-[0.85rem] tracking-[0.04em] text-white focus:outline-none focus:border-[rgba(196,160,80,0.6)] transition-colors"
+            className="w-full bg-[#070707] border border-[rgba(196,160,80,0.2)] px-4 py-3 font-oswald font-[200] text-[0.85rem] tracking-[0.04em] text-white focus:outline-none focus:border-[rgba(196,160,80,0.6)] transition-colors"
           >
             <option value="">Selecione um status</option>
             <option value="Disponível">Disponível</option>
@@ -364,14 +459,25 @@ export default function HouseForm({ house, onSuccess }: HouseFormProps) {
         </div>
       )}
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={isLoading || !!slugError}
-        className="w-full font-oswald font-[300] text-[0.6rem] tracking-[0.35em] uppercase text-[rgba(196,160,80,0.9)] border border-[rgba(196,160,80,0.4)] px-8 py-3 transition-all duration-300 hover:bg-[rgba(196,160,80,0.1)] hover:border-[rgba(196,160,80,0.8)] disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isLoading ? 'Salvando...' : house ? 'Atualizar Imóvel' : 'Criar Imóvel'}
-      </button>
+      {/* Submit and Back Buttons */}
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          disabled={isLoading || !!slugError}
+          className="flex-1 font-oswald font-[300] text-[0.6rem] tracking-[0.35em] uppercase text-[rgba(196,160,80,0.9)] border border-[rgba(196,160,80,0.4)] px-8 py-3 transition-all duration-300 hover:bg-[rgba(196,160,80,0.1)] hover:border-[rgba(196,160,80,0.8)] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Salvando...' : house ? 'Atualizar Imóvel' : 'Criar Imóvel'}
+        </button>
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex-1 font-oswald font-[300] text-[0.6rem] tracking-[0.35em] uppercase text-[rgba(255,255,255,0.6)] border border-[rgba(255,255,255,0.2)] px-8 py-3 transition-all duration-300 hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(255,255,255,0.4)]"
+          >
+            Voltar
+          </button>
+        )}
+      </div>
     </form>
   );
 }

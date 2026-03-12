@@ -28,7 +28,8 @@ export default async function CasaDetalhe({ params }: { params: Promise<{ slug: 
   const house = await getHouseBySlug(slug);
   if (!house) notFound();
 
-  const [hero, ...gallery] = house.images;
+  const hero = house.image;
+  const gallery = house.images || [];
 
   const statusColor = house.status === 'Em construção'
     ? 'bg-[rgba(255,140,0,0.25)] border-[rgba(255,180,0,0.7)] text-[rgba(255,180,0,1)] shadow-[0_0_12px_rgba(255,165,0,0.4)]'
@@ -143,13 +144,15 @@ export default async function CasaDetalhe({ params }: { params: Promise<{ slug: 
           </p>
 
           {/* First wide */}
-          <div className="relative overflow-hidden aspect-[16/7] mb-3 group/g0">
-            <img
-              src={gallery[0]}
-              alt={`${house.title} – foto 1`}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover/g0:scale-[1.04]"
-            />
-          </div>
+          {gallery[0] && (
+            <div className="relative overflow-hidden aspect-[16/7] mb-3 group/g0">
+              <img
+                src={gallery[0]}
+                alt={`${house.title} – foto 1`}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover/g0:scale-[1.04]"
+              />
+            </div>
+          )}
 
           {/* Rest in grid */}
           {gallery.slice(1).length > 0 && (
